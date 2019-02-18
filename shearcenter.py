@@ -17,8 +17,8 @@ d3      =   1.642*10**-2 #[m]
 theta   =   26          #[deg]
 P       =   91700       #[N]
 q       =   4530        #[N/m]
-Iyy     =   261143990,8*10**-12     #[m^4]
-Izz     =   11991695,56*10**-12     #[m^4]
+Iyy     =   261143990.8*10**-12     #[m^4]
+Izz     =   11991695.56*10**-12     #[m^4]
 
 radius = h/2                #[m]
 tribase =   Ca-radius       #[m], length of triangle base 
@@ -37,15 +37,18 @@ Sy = 1
 
 S12 = radius                            #length of segment 12
 S23 = np.sqrt(radius**2+tribase**2)     #length of segment 23
+CircTri = 2*(S12+S23)                   #circumference of triangular cell
 
-qb23 = -Sy/Izz*(radius/(2*S23))*s1**2           #basic shearflow calculation segment 23
-qb12 = -(Sy/Izz*(radius)*s2)-(Sy/Izz*(radius/(2*S23))*S23**2) #basic shearflow calculation segment 12
+s1 = 1
+s2 = 1
 
+qb23 = -(Sy*tsk/Izz)*(radius/(2*S23))*s1**2                           #basic shearflow calculation segment 23
+qb12 = -((Sy*tsp/Izz)*(radius)*s2)-((Sy*tsp/Izz)*(radius/(2*S23))*S23**2)   #basic shearflow calculation segment 12
 
+qb23int = -(Sy*tsk/Izz)*(radius/(6*S23))*S23**3
+qb12int = -((Sy*tsp/Izz)*(radius)*0.5*S12**2)-((Sy*tsp/Izz)*(radius/(2*S23))*S12*S23**2)
 
+qbint = 2*(qb23int+qb12int)
+qs0 = qbint/CircTri
 
-
-
-
-
-
+F12 = -((Sy*tsp/Izz)*(radius)*s2)-((Sy*tsp/Izz)*(radius/(2*S23))*S23**2) + qs0
