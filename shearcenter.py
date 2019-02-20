@@ -20,35 +20,29 @@ q       =   4530        #[N/m]
 Iyy     =   261143990.8*10**-12     #[m^4]
 Izz     =   11991695.56*10**-12     #[m^4]
 
-radius = h/2                #[m]
-tribase =   Ca-radius       #[m], length of triangle base 
+r = h/2                #[m], radius of circular segment
+
+#-------------------------------
+
+U = 1/float(Izz)
+
+BoomZ = [0.25062, 0.19631, 0.142, 0.08769, 0.03337999999999999, -0.020930000000000008, -0.07524000000000002, -0.12955, -0.20907, -0.24206999999999998, -0.20907, -0.12955, -0.07524000000000002, -0.020930000000000008, 0.03337999999999999, 0.08769, 0.142, 0.19631, 0.25062]
+BoomY = [-0.0140625, -0.028125, -0.0421875, -0.05625, -0.0703125, -0.084375, -0.0984375, -0.1125, -0.07955, 0, 0.07955, 0.1125, 0.0984375, 0.084375, 0.0703125, 0.05625, 0.0421875, 0.028125, 0.0140625]
+BoomA = [0.00010371, 0.00010371, 0.00010371, 0.00010371, 0.00010371, 0.00010371, 0.00010371, 0.00018219, 0.00012975, 0.00010682999999999999, 0.00012975, 0.00018219, 0.00010371, 0.00010371, 0.00010371, 0.00010371, 0.00010371, 0.00010371, 0.00010371]
+
+Half  = [0.277775, 0.223465, 0.169155, 0.114845, 0.060535, 0.006225, -0.048085, -0.102395, -0.16931, -0.22557, -0.22557, -0.16931, -0.102395, -0.048085, 0.006224999999999994, 0.060535, 0.114845, 0.169155, 0.223465, 0.277775]
+
+Zcent = 0.30493
+Ycent = 0
+
+qBase = []
+index = 0
+while index <len(BoomZ):
+    qBase.append(U*(BoomA[index]*BoomZ[index]))
+    index = index +1
+    
+print qBase
+    
 
 
-#Produce mock locations for intermediate usage
-xmock = la/2
-ymock = 0
-zmock = Ca/2
 
-print xmock,ymock,zmock
-
-#END OF MOCK RESULTS
-
-Sy = 1
-
-S12 = radius                            #length of segment 12
-S23 = np.sqrt(radius**2+tribase**2)     #length of segment 23
-CircTri = 2*(S12+S23)                   #circumference of triangular cell
-
-s1 = 1
-s2 = 1
-
-qb23 = -(Sy*tsk/Izz)*(radius/(2*S23))*s1**2                           #basic shearflow calculation segment 23
-qb12 = -((Sy*tsp/Izz)*(radius)*s2)-((Sy*tsp/Izz)*(radius/(2*S23))*S23**2)   #basic shearflow calculation segment 12
-
-qb23int = -(Sy*tsk/Izz)*(radius/(6*S23))*S23**3
-qb12int = -((Sy*tsp/Izz)*(radius)*0.5*S12**2)-((Sy*tsp/Izz)*(radius/(2*S23))*S12*S23**2)
-
-qbint = 2*(qb23int+qb12int)
-qs0 = qbint/CircTri
-
-F12 = -((Sy*tsp/Izz)*(radius)*s2)-((Sy*tsp/Izz)*(radius/(2*S23))*S23**2) + qs0
