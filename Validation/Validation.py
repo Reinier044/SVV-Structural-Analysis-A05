@@ -1,33 +1,14 @@
 import pandas as pd
-filename = raw_input("file code: ")
-df = pd.read_fwf(str(filename+"_mod.rpt"), skiprows=[1])
+filename = raw_input("file name (no need to give csv extension): ")
+df = pd.read_csv(str(filename+".csv"))
 
-headers = list(df.columns.values)
-ValueMatrix = []
+headers = list(df.columns.values)   #create list of all column (header) names
+dataset = {}                        #create empty dictionary for all data
 
+flag = 0                            #Set flag to skip first empty column
 for header in headers:
     dfToList = df[header].tolist()
     dfList = list(df[header])
-    ValueMatrix.append(dfList)
-
-dataset = {}
-i = 0
-while i<=1:
-    dataset[headers[i]]=ValueMatrix[i]
-    i = i + 1
-
-#headers.index(header) to recall corresponding list in ValueMatrix
-Misestress = []
-iteration = 0
-for miseone in ValueMatrix[2]:
-    misetwo = ValueMatrix[3][iteration]
-    iteration = iteration + 1
-    try:
-        MiseStressAvg = (float(miseone) + float(misetwo))/2
-    except:
-        MiseStressAvg = 'nan'
-    Misestress.append(MiseStressAvg)
-
-dataset['MiseStress']=Misestress
-newdf = pd.DataFrame(data=dataset)
-newdf.to_csv(str(filename+'.csv'))
+    if flag>0:
+        dataset[header]=dfList      #Create dictionary item with header as its key and returns a list containing all datapoints
+    flag = flag + 1                       #Used to not write the first empty column in the dataset 
