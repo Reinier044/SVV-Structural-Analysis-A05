@@ -14,18 +14,22 @@ h = 225.
 G = 28000.
 
 #Calculation constants
+r = h/2
 A1 = (h/2)**2*np.pi
-A2 = (Ca-h/2)*h/2
-s1 = np.pi*h/2
-s2 = 2*np.sqrt((h/2)**2+(Ca-h/2)**2)
+A2 = (Ca-r)*r
+s1 = np.pi*r
+s2 = 2*np.sqrt(r**2+(Ca-r)**2)
 dstr = (s1+s2)/19
-tht2 = dstr*2/h
+tht2 = dstr/r
 tht1 = np.pi/2-tht2
+phi = np.tan(r/(Ca-r))
+p_tr = np.sin(np.pi/2-phi)*r
 
 #Given data from Luc and Andreas
 Vz = np.array([67290.91180274,67290.91180274,67290.91180274,67290.91180274,67290.91180274,67290.91180274])
 Vy = np.array([-23344.02874676,-23344.02874676,-23344.02874676,-23344.02874676,-23344.02874676,-23344.02874676])
 T = np.array([5000000.,5000000.,5000000.,5000000.,5000000.,5000000.])
+Mo = np.zeros(sections)
 
 #Given data from Angela
 Iyy = 52013464.25
@@ -54,16 +58,13 @@ for i in range(0,sections):
 for i in range(0,sections):
     qby[i] = -Vz[i]/Iyy
     qbz[i] = -Vy[i]/Izz
-    #Special cases
     qb[0][i] = qby[i]*Area[8]*zloc[8]+qbz[i]*Area[8]*yloc[8]
     qb[7][i] = 0.
     qb[8][i] = 0.
     qb[9][i] = qby[i]*Area[9]*zloc[9]+qbz[i]*Area[9]*yloc[9]
     qb[19][i] = qby[i]*Area[1]*zloc[1]+qbz[i]*Area[1]*yloc[1]
-    #Normal cases
     for j in range(1,7):
         qb[j][i] = qby[i]*Area[j]*zloc[j]+qbz[i]*Area[j]*yloc[j]
-    #Symmetry
     for j in range(10,19):
         qb[j][i] = qb[19-j][i]
     for j in range(8,12):
@@ -73,10 +74,21 @@ for i in range(0,sections):
 
 #Deflection due to shear
 for i in range(0,sections):
+    Mo_nose =2*qb[8][i]*r**2*tht1+2*qb[9][i]*r**2*tht2
+    Mo_triangle = 2*(qb[7][i]+qb[6][i]+qb[5][i]+qb[4][i]+qb[3][i]+qb[2][i]+qb[1][i])*p_tr*dstr+qb[19][i]*p_tr*dstr
     eqn = np.array([[2*A1,2*A2,0],[(s1/t1+h/t2)/(2*A1),-h/(2*A1*t2),-1],[-h/(2*A2*t2),(h/t2+s1/t1)/(2*A2),-1]])
-    sol = np.array([[0],[(-qsum1[i]-qb[0][i]*h/t2)/(2*A1*G)],[(-qsum2[i]-qb[0][i]*h/t2)/(2*A1*G)]])
+    sol = np.array([[-Mo_nose-Mo_triangle-Mo[i]],[(-qsum1[i]-qb[0][i]*h/t2)/(2*A1*G)],[(-qsum2[i]-qb[0][i]*h/t2)/(2*A1*G)]])
     x2 = np.linalg.solve(eqn,sol)*la/sections
     Sdefl[i] = x2[2]+Sdefl[i-1]
+    for j in range(1,8):
+        qb[j][i] = qb[j][i]+x2[0]
+    for j in range(8,12):
+        qb[j][i] = qb[j][i]+x2[1]
+    for j in range(12,19):
+        qb[j][i] = qb[19-j][i]
+    qb[0][i] = qb[0][i]+x[0]
+    qb[19][i] = qb[0][i] + x[0]
+
 
 #Deflection due to bending (z-axis)
 #Andreas
@@ -94,9 +106,8 @@ implot = plt.imshow(im)
 y = [265,340,350,360,370,380,390,390,380,310,230,160,140,140,150,160,170,180,190,200]
 z = [210,570,510,450,390,330,270,210,150,100,90,130,190,250,310,370,430,490,550,650]
 for i in range(20):
-    plt.annotate(i,(z[i],y[i]))
+    plt.annotate(qb[i,0],(z[i],y[i]))
 plt.xlabel("z")
 plt.ylabel("y")
 plt.title("Shear flows")
 plt.show()
-print(qb)
