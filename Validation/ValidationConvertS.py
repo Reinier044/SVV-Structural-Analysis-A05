@@ -23,11 +23,12 @@ for miseone in ValueMatrix[2]:
     misetwo = ValueMatrix[3][iteration]
     iteration = iteration + 1
     try:
-        MiseStressAvg = (float(miseone) + float(misetwo))/2
+        MiseStressAvg = (float(miseone) + float(misetwo))/2     #average the von mises stress of upper and lower side
     except:
-        MiseStressAvg = 'nan'
+        MiseStressAvg = 'nan'               #to avoid errors
     Misestress.append(MiseStressAvg)
 
+#Write new csv file with average von Mises stress for each node
 dataset['MiseStress']=Misestress
 newdf = pd.DataFrame(data=dataset)
 newdf.to_csv(str(filename+'.csv'))
