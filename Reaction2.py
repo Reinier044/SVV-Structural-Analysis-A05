@@ -47,31 +47,34 @@ print(Pr)
 
 
 
-a = np.array([[0,0,0,x1,1], [-(x2-x1)**3/6,0,0,x2,1], [-(x3-x1)**3/6,-(x3-x2)**3/6,0,x3,1], [1,1,1,0,0], [-(x2-x1),0,(x3-x2),0,0]])
+a = np.array([[0,0,0,x1,1], [-(x2-x1)**3/6,0,0,x2,1], [-(x3-x1)**3/6,-(x3-x2)**3/6,0,x3,1], [1,1,1,0,0], [x1,x2,x3,0,0]])
 b = np.array([-E*Izz*d1y-qy*x1**4/24,
               pry*(xa/2)**3/6-qy*x2**4/24,
               -E*Izz*d3y-py*(x3-x2-xa/2)-qy*x3**4/24+pry*(x3-x2+xa/2),
               qy*La+py-pry,
-              py*xa/2+pry*xa/2])
+              qy*La**2/2+py*(x2+xa/2)-pry*(x2-xa/2)])
 
 y = np.linalg.solve(a,b)
-
 R1y = y[0]
 R2y = y[1]
 R3y = y[2]
 c1 = y[3]
 c2 = y[4]
+    
+    
 
-print(y)
+
+
+
 
 #Reaction forces in z-direction and integration constants
 
-c = np.array([[(x3-x1)**3/6,(x3-x2)**3/6,0,x3,1],[(x2-x1)**3/6,0,(x2-x3)**3/6,x2,1],[0,(x1-x2)**3/6,(x1-x3)**3/6,x1,1],[1,1,1,0,0],[x2-x1,0,-(x3-x2),0,0]])
+c = np.array([[0,0,0,x1,1],[(x2-x1)**3/6,0,0,x2,1],[(x3-x1)**3/6,(x3-x2)**3/6,0,x3,1],[1,1,1,0,0],[x1,x2,x3,0,0]])
 d = np.array([-E*Iyy*d1z-qz*x1**4/24,
               -qz*x2**4/24-prz*(xa/2)**3/6 ,
-              -qz*x3**4/24+pz*(x3-x2-xa/2)**3/6-prz*(x3-x2+xa/2)**3/6 ,
+              -qz*x3**4/24+pz*(x3-x2-xa/2)**3/6-prz*(x3-x2+xa/2)**3/6 - E*Iyy*d3z ,
               -prz+pz-qz*La ,
-              -prz*xa/2-pz*xa/2])
+              -qz*La**2/2+pz*(x2+xa/2)-prz*(x2-xa/2)])
 
 z = np.linalg.solve(c,d)
 
@@ -84,41 +87,101 @@ e2 = z[4]
 print(z)
 
 
+#check
+
+#t1 = R1y + R2y + R3y + pry - py - qy*La
+#t2 = R1z + R2z + R3z + prz - pz + qz*La
+
+#print(t1,t2)
+
 #Ranges
 
-s1 = np.arange(0,x1,0.001)
-s2 = np.arange(x1,x2-xa/2,0.001)
-s3 = np.arange(x2-xa/2,x2,0.001)
-s4 = np.arange(x2,x2+xa/2,0.001)
-s5 = np.arange(x2+xa/2,x3,0.001)
-s6 = np.arange(x3,La,0.001)
+section = 1000
+
+s1 = np.arange(0,x1,La/section)
+s2 = np.arange(x1,x2-xa/2,La/section)
+s3 = np.arange(x2-xa/2,x2,La/section)
+s4 = np.arange(x2,x2+xa/2,La/section)
+s5 = np.arange(x2+xa/2,x3,La/section)
+s6 = np.arange(x3,La,La/section)
+
+s = np.arange(0,La,0.001)
 
 #Moment diagram x-y plane
 
-m1 = qy/2*s1**2
-m2 = qy/2*(s2)**2 - R1y*(s2-x1)
-m3 = qy/2*(s3)**2 - R1y*(s3-x1) - pry*(s3-(x2-xa/2))
-m4 = qy/2*(s4)**2 - R1y*(s4-x1) - pry*(s4-(x2-xa/2)) - R2y*(s4-x2)
-m5 = qy/2*(s5)**2 - R1y*(s5-x1) - pry*(s5-(x2-xa/2)) - R2y*(s5-x2) + py*(s5-(x2+xa/2))
-m6 = qy/2*(s6)**2 - R1y*(s6-x1) - pry*(s6-(x2-xa/2)) - R2y*(s6-x2) + py*(s6-(x2+xa/2)) - R3y*(s6-x3)
+my1 = qy/2*s1**2
+my2 = qy/2*(s2)**2 - R1y*(s2-x1)
+my3 = qy/2*(s3)**2 - R1y*(s3-x1) - pry*(s3-(x2-xa/2))
+my4 = qy/2*(s4)**2 - R1y*(s4-x1) - pry*(s4-(x2-xa/2)) - R2y*(s4-x2)
+my5 = qy/2*(s5)**2 - R1y*(s5-x1) - pry*(s5-(x2-xa/2)) - R2y*(s5-x2) + py*(s5-(x2+xa/2))
+my6 = qy/2*(s6)**2 - R1y*(s6-x1) - pry*(s6-(x2-xa/2)) - R2y*(s6-x2) + py*(s6-(x2+xa/2)) - R3y*(s6-x3)
 
-plt.subplot(2,1,1)
-plt.plot(s1,m1,s2,m2,s3,m3,s4,m4,s5,m5,s6,m6)
+
+
+#Shear diagram x-z plane
+
+vz1 = qz*s1
+vz2 = qz*s2 + R1z
+vz3 = qz*s3 + R1z + prz
+vz4 = qz*s4 + R1z + prz + R2z
+vz5 = qz*s5 + R1z + prz + R2z - pz
+vz6 = qz*s6 + R1z + prz + R2z - pz + R3z
+
+
+
+#Moment diagram x-z plane
+
+mz1 = qz/2*s1**2
+mz2 = qz/2*(s2)**2 + R1z*(s2-x1)
+mz3 = qz/2*(s3)**2 + R1z*(s3-x1) + prz*(s3-(x2-xa/2))
+mz4 = qz/2*(s4)**2 + R1z*(s4-x1) + prz*(s4-(x2-xa/2)) + R2z*(s4-x2)
+mz5 = qz/2*(s5)**2 + R1z*(s5-x1) + prz*(s5-(x2-xa/2)) + R2z*(s5-x2) - pz*(s5-(x2+xa/2))
+mz6 = qz/2*(s6)**2 + R1z*(s6-x1) + prz*(s6-(x2-xa/2)) + R2z*(s6-x2) - pz*(s6-(x2+xa/2)) + R3z*(s6-x3)
 
 
 #Shear diagram x-y plane
 
-v1 = -q*s1
-v2 = -q*s2 + R1y
-v3 = -q*s3 + R1y + pry
-v4 = -q*s4 + R1y + pry + R2y
-v5 = -q*s5 + R1y + pry + R2y - py
-v6 = -q*s6 + R1y + pry + R2y - py + R3y
+vy1 = -qy*s1
+vy2 = -qy*s2 + R1y
+vy3 = -qy*s3 + R1y + pry
+vy4 = -qy*s4 + R1y + pry + R2y
+vy5 = -qy*s5 + R1y + pry + R2y - py
+vy6 = -qy*s6 + R1y + pry + R2y - py + R3y
 
-plt.subplot(2,1,2)
-plt.plot(s1,v1,s2,v2,s3,v3,s4,v4,s5,v5,s6,v6)
+
+#plotting diagrams
+
+#moment x-y plane
+plt.subplot(4,1,1)
+plt.title('my')
+plt.plot(s1,my1,s2,my2,s3,my3,s4,my4,s5,my5,s6,my6)
+
+#shear x-y plane
+plt.subplot(4,1,2)
+plt.title('vy')
+plt.plot(s1,vy1,s2,vy2,s3,vy3,s4,vy4,s5,vy5,s6,vy6)
+
+#moment x-z plane
+plt.subplot(4,1,3)
+plt.title('mz')
+plt.plot(s1,mz1,s2,mz2,s3,mz3,s4,mz4,s5,mz5,s6,mz6)
+
+#shear x-z plane
+plt.subplot(4,1,4)
+plt.title('vz')
+plt.plot(s1,vz1,s2,vz2,s3,vz3,s4,vz4,s5,vz5,s6,vz6)
+
+
 
 plt.show()
+
+
+
+#torque
+
+
+
+
 
 
 
