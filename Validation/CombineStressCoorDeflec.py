@@ -220,21 +220,104 @@ print '//Finished linking deflection data'
 
 #---------------------------------------------------------------------------------------------
 
-#Put all data in a dictionary
-Finaldataset = {}
+#Put all data in a new temporary dictionary
+dataset = {}
 
-Finaldataset['node'] = NewNode
-Finaldataset['x']= NewX
-Finaldataset['y']= NewY
-Finaldataset['z']= NewZ
-Finaldataset['MiseStress'] = NewStress
-Finaldataset['U.Mag'] = UMag
-Finaldataset['U.U1'] = U1
-Finaldataset['U.U2'] = U2
-Finaldataset['U.U3'] = U3
+dataset['node'] = NewNode
+dataset['x']= NewX
+dataset['y']= NewY
+dataset['z']= NewZ
+dataset['MiseStress'] = NewStress
+dataset['U.Mag'] = UMag
+dataset['U.U1'] = U1
+dataset['U.U2'] = U2
+dataset['U.U3'] = U3
+
+
+#---------------------------------------------------------------------------------------------
+
+print
+print '//Start reordering'
+#Reorder the nodes to correspond the ordering of the models output data
+firsts = [0 ,1, 3, 5, 7, 9, 11, 13, 19, 20, 21, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56]
+seconds = [2, 4, 6, 8, 10, 12, 14, 15, 16, 17, 18, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57]
+
+NewNode = []
+NewX = []
+NewY = []
+NewZ = []
+NewStress = []
+UMag = []
+U1 = []
+U2 = []
+U3 = []
+
+primer = 0
+while primer <len(dataset['node']):
+    TempNode = []
+    TempX = []
+    TempY = []
+    TempZ = []
+    TempStress = []
+    TempUMag = []
+    TempU1 = []
+    TempU2 = []
+    TempU3 = []
+
+    for index in firsts:
+        TempNode.append(dataset['node'][(index+primer)])
+        TempX.append(dataset['x'][(index+primer)])
+        TempY.append(dataset['y'][(index+primer)])
+        TempZ.append(dataset['z'][(index+primer)])
+        TempStress.append(dataset['MiseStress'][(index+primer)])
+        TempUMag.append(dataset['U.Mag'][(index+primer)])
+        TempU1.append(dataset['U.U1'][(index+primer)])
+        TempU2.append(dataset['U.U2'][(index+primer)])
+        TempU3.append(dataset['U.U3'][(index+primer)])
+    for index in reversed(seconds):
+        TempNode.append(dataset['node'][(index+primer)])
+        TempX.append(dataset['x'][(index+primer)])
+        TempY.append(dataset['y'][(index+primer)])
+        TempZ.append(dataset['z'][(index+primer)])
+        TempStress.append(dataset['MiseStress'][(index+primer)])
+        TempUMag.append(dataset['U.Mag'][(index+primer)])
+        TempU1.append(dataset['U.U1'][(index+primer)])
+        TempU2.append(dataset['U.U2'][(index+primer)])
+        TempU3.append(dataset['U.U3'][(index+primer)])
+        
+    primer = primer + 58
+    
+    NewNode = NewNode + TempNode[29:58]+TempNode[0:28]
+    NewX = NewX + TempX[29:58]+TempX[0:28]
+    NewY = NewY + TempY[29:58]+TempY[0:28]
+    NewZ = NewZ +TempZ[29:58]+TempZ[0:28]
+    NewStress = NewStress + TempStress[29:58]+TempStress[0:28]
+    UMag = UMag + TempUMag[29:58]+TempUMag[0:28]
+    U1 = U1 + TempU1[29:58]+TempU1[0:28]
+    U2 = U2 + TempU2[29:58]+TempU2[0:28]
+    U3 = U3 + TempU3[29:58]+TempU3[0:28]
+    
+
+print
+print '//Finished reordering'
+#---------------------------------------------------------------------------------------------
+
+#Put all data in a new empty dictionary
+dataset = {}
+
+dataset['node'] = NewNode
+dataset['x']= NewX
+dataset['y']= NewY
+dataset['z']= NewZ
+dataset['MiseStress'] = NewStress
+dataset['U.Mag'] = UMag
+dataset['U.U1'] = U1
+dataset['U.U2'] = U2
+dataset['U.U3'] = U3
+
 
 #Write new dataset to the csv file
-newdf = pd.DataFrame(Finaldataset)
+newdf = pd.DataFrame(dataset)
 newdf.to_csv(filenamOutput)
 
 print
