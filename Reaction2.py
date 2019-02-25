@@ -13,8 +13,10 @@ d3y = D3*cos(radians(26))
 d3z = D3*sin(radians(26))
 
 E = 73.1*(10**9) #Pa
-Izz = 11996389.06*(10**(-12)) #still to be changed moment of inertia around z-axis
-Iyy = 52013464.25*(10**(-12))
+#Izz = 11996389.06*(10**(-12)) #still to be changed moment of inertia around z-axis
+#Iyy = 52013464.25*(10**(-12))
+Izz = 1.252*(10**(-4))
+Iyy = 6.203*(10**(-4))
 x1 = 0.153 #m 
 x2 = 1.281 #m
 x3 = 2.681 #m
@@ -36,7 +38,7 @@ qz = q*sin(radians(26)) #N
 Pr = (qy*(0.25*ca-Ha/2)+pz*Ha/2-py*Ha/2)/(cos(radians(26))*Ha/2-sin(radians(26))*Ha/2)
 pry = Pr*sin(radians(26))
 prz = Pr*cos(radians(26))
-print(Pr)
+#print(Pr)
 
 
 
@@ -60,8 +62,8 @@ R2y = y[1]
 R3y = y[2]
 c1 = y[3]
 c2 = y[4]
-    
-    
+
+#print(y)
 
 
 
@@ -84,28 +86,33 @@ R3z = z[2]
 e1 = z[3]
 e2 = z[4]
 
-print(z)
+#print(z)
 
 
 #check
 
-#t1 = R1y + R2y + R3y + pry - py - qy*La
-#t2 = R1z + R2z + R3z + prz - pz + qz*La
+t1 = R1y + R2y + R3y + pry - py - qy*La
+t2 = R1z + R2z + R3z + prz - pz + qz*La
 
-#print(t1,t2)
+print(t1,t2)
 
 #Ranges
 
 section = 1000
+s1 = np.arange(0,x1,0.0255)
+s2 = np.arange(x1,x2-xa/2,0.0247)
+s3 = np.arange(x2-xa/2,x2,0.024522)
+s4 = np.arange(x2,x2+xa/2,0.024522)
+s5 = np.arange(x2+xa/2,x3,0.024706)
+s6 = np.arange(x3,La,0.024522)
 
-s1 = np.arange(0,x1,La/section)
-s2 = np.arange(x1,x2-xa/2,La/section)
-s3 = np.arange(x2-xa/2,x2,La/section)
-s4 = np.arange(x2,x2+xa/2,La/section)
-s5 = np.arange(x2+xa/2,x3,La/section)
-s6 = np.arange(x3,La,La/section)
+def lijst(x):
+    m = []
+    for i in x:
+        m.append(i)
 
-s = np.arange(0,La,0.001)
+    return m
+        
 
 #Moment diagram x-y plane
 
@@ -115,6 +122,21 @@ my3 = qy/2*(s3)**2 - R1y*(s3-x1) - pry*(s3-(x2-xa/2))
 my4 = qy/2*(s4)**2 - R1y*(s4-x1) - pry*(s4-(x2-xa/2)) - R2y*(s4-x2)
 my5 = qy/2*(s5)**2 - R1y*(s5-x1) - pry*(s5-(x2-xa/2)) - R2y*(s5-x2) + py*(s5-(x2+xa/2))
 my6 = qy/2*(s6)**2 - R1y*(s6-x1) - pry*(s6-(x2-xa/2)) - R2y*(s6-x2) + py*(s6-(x2+xa/2)) - R3y*(s6-x3)
+
+m1 = lijst(my1)
+m2 = lijst(my2)
+m3 = lijst(my3)
+m4 = lijst(my4)
+m5 = lijst(my5)
+m6 = lijst(my6)
+
+#missing 0.00134m in span parts 
+
+MZ = m1+m2+m3+m4+m5+m6
+
+
+
+
 
 
 
@@ -127,7 +149,16 @@ vz4 = qz*s4 + R1z + prz + R2z
 vz5 = qz*s5 + R1z + prz + R2z - pz
 vz6 = qz*s6 + R1z + prz + R2z - pz + R3z
 
+v1 = lijst(vz1)
+v2 = lijst(vz2)
+v3 = lijst(vz3)
+v4 = lijst(vz4)
+v5 = lijst(vz5)
+v6 = lijst(vz6)
 
+
+VZ = v1+v2+v3+v4+v5+v6
+print(VZ)
 
 #Moment diagram x-z plane
 
@@ -138,6 +169,16 @@ mz4 = qz/2*(s4)**2 + R1z*(s4-x1) + prz*(s4-(x2-xa/2)) + R2z*(s4-x2)
 mz5 = qz/2*(s5)**2 + R1z*(s5-x1) + prz*(s5-(x2-xa/2)) + R2z*(s5-x2) - pz*(s5-(x2+xa/2))
 mz6 = qz/2*(s6)**2 + R1z*(s6-x1) + prz*(s6-(x2-xa/2)) + R2z*(s6-x2) - pz*(s6-(x2+xa/2)) + R3z*(s6-x3)
 
+m11 = lijst(mz1)
+m22 = lijst(mz2)
+m33 = lijst(mz3)
+m44 = lijst(mz4)
+m55 = lijst(mz5)
+m66 = lijst(mz6)
+
+
+MY = m11+m22+m33+m44+m55+m66
+
 
 #Shear diagram x-y plane
 
@@ -147,6 +188,16 @@ vy3 = -qy*s3 + R1y + pry
 vy4 = -qy*s4 + R1y + pry + R2y
 vy5 = -qy*s5 + R1y + pry + R2y - py
 vy6 = -qy*s6 + R1y + pry + R2y - py + R3y
+
+v11 = lijst(vy1)
+v22 = lijst(vy2)
+v33 = lijst(vy3)
+v44 = lijst(vy4)
+v55 = lijst(vy5)
+v66 = lijst(vy6)
+
+
+VY = v11+v22+v33+v44+v55+v66
 
 
 #plotting diagrams
