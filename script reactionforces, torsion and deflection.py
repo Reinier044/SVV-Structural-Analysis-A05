@@ -213,6 +213,8 @@ t44 = lijst(t4)
 t55 = lijst(t5)
 t66 = lijst(t6)
 
+#list with torsion for predefined x-values
+T = t11 + t22 + t33 + t44 + t55 + t66
 
 #plotting diagrams
 
