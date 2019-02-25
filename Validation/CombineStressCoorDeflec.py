@@ -1,13 +1,20 @@
 import pandas as pd
-filename = raw_input("file code: ")
+name = raw_input("Loadcase code: ")
+filenameStress = 'A320_S'+name+'.csv'
+filenameDefl = 'A320_U'+name+'.csv'
+filenamOutput = 'A320_Val_'+name+'.csv'
 filenameCoor = 'Coordinates.csv'
 df = pd.read_csv(str(filenameCoor))
+print 
+print "//Started reformatting nodes of discretization"
+
 
 #Lengths of aileron
 Lx = 2771
 Lz = 547
 Ly = 112.5
 
+#-----------------------------------------------------------------------------------------------------
 headers = list(df.columns.values)   #create list of all column (header) names
 dataset = {}                        #create empty dictionary for all data
 
@@ -100,13 +107,17 @@ Coordataset['x']= NewX
 Coordataset['y']= NewY
 Coordataset['z']= NewZ
 
+print
+print '//Finished reformatting'
 
-#Write new dataset to the csv file
-newdf = pd.DataFrame(Coordataset)
-#newdf.to_csv(str(filenameCoor))
+
+#--------------------------------------------------------------------------------------------------------
 
 #Import the stress data    
-df = pd.read_csv(str(filename+".csv"))
+df = pd.read_csv(str(filenameStress))
+print
+print '//Started linking stress data to nodes'
+
 
 headers = list(df.columns.values)   #create list of all column (header) names
 Stressdataset = {}                        #create empty dictionary for all data
@@ -128,20 +139,86 @@ NewStress = []
 Coorprimer = 0                      #Set primer that runs through all the Coordinate nodes list
 for node in Coordataset['node']:
     Stressprimer = 0                #Set primer that runs through all the stress nodes list
-        
+    
+    #Append current node information to the lists
+    NewNode.append(node)
+    NewX.append(Coordataset['x'][Coorprimer])
+    NewY.append(Coordataset['y'][Coorprimer])
+    NewZ.append(Coordataset['z'][Coorprimer])
+    Stress = 0
+    
+    #Look for the Von Mises stress of the current node
     while Stressprimer < len(Coordataset['node']):
         if int(Stressdataset['Node'][Stressprimer]) == int(node):       #Check if node corresponds to node in the stress file
         
-            #Append all the data for the found node with the corresponding index to the new lists 
-            NewNode.append(node)
-            NewX.append(Coordataset['x'][Coorprimer])
-            NewY.append(Coordataset['y'][Coorprimer])
-            NewZ.append(Coordataset['z'][Coorprimer])
-            NewStress.append(Stressdataset['MiseStress'][Stressprimer])
+            #If node corresponds, change Stress value accordingly
+            Stress = Stressdataset['MiseStress'][Stressprimer]
             break
         else:
             Stressprimer = Stressprimer + 1
+    #Append stress value to the list
+    NewStress.append(Stress)
     Coorprimer = Coorprimer + 1
+
+print
+print '//Finished linking stress data'
+
+#-------------------------------------------------------------------------------------------
+    
+    
+#Import the Deflection data    
+df = pd.read_csv(str(filenameDefl))
+
+print
+print '//Started linking deflection data to nodes'
+
+
+headers = list(df.columns.values)   #create list of all column (header) names
+Defldataset = {}                        #create empty dictionary for all data
+
+for header in headers:
+    dfToList = df[header].tolist()
+    dfList = list(df[header])
+    Defldataset[header]=dfList      #Create dictionary item with header as its key and returns a list containing all datapoints
+
+
+
+#Create lists that contain the new counting order
+UMag = []
+U1 = []
+U2 = []
+U3 = []
+
+
+Nodeprimer = 0                      #Set primer that runs through all the Coordinate nodes list
+for node in Coordataset['node']:
+    Deflprimer = 0                #Set primer that runs through all the deflection nodes list   
+    uMag = 0
+    u1 = 0
+    u2 = 0
+    u3 = 0
+    while Deflprimer < len(Coordataset['node']):
+        if int(Defldataset['Node'][Deflprimer]) == int(node):       #Check if node corresponds to node in the deflection file
+        
+            #Append all the data for the found node with the corresponding index to the new lists 
+            uMag = Defldataset['U.Mag'][Deflprimer]
+            u1 = Defldataset['U.U1'][Deflprimer]
+            u2 = Defldataset['U.U2'][Deflprimer]
+            u3 = Defldataset['U.U1'][Deflprimer]
+            break
+        else:
+            Deflprimer = Deflprimer + 1
+            
+    UMag.append(uMag)
+    U1.append(u1)
+    U2.append(u2)
+    U3.append(u3)
+    Nodeprimer = Nodeprimer + 1
+
+print
+print '//Finished linking deflection data'
+
+#---------------------------------------------------------------------------------------------
 
 #Put all data in a dictionary
 Finaldataset = {}
@@ -151,7 +228,17 @@ Finaldataset['x']= NewX
 Finaldataset['y']= NewY
 Finaldataset['z']= NewZ
 Finaldataset['MiseStress'] = NewStress
+Finaldataset['U.Mag'] = UMag
+Finaldataset['U.U1'] = U1
+Finaldataset['U.U2'] = U2
+Finaldataset['U.U3'] = U3
 
+#Write new dataset to the csv file
+newdf = pd.DataFrame(Finaldataset)
+newdf.to_csv(filenamOutput)
 
+print
+print '//Finished. Written data into:'
+print filenamOutput
 
 
