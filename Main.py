@@ -29,7 +29,7 @@ p_tr = np.sin(np.pi/2-phi)*r
 Vz = np.array([67290.91180274,67290.91180274,67290.91180274,67290.91180274,67290.91180274,67290.91180274])
 Vy = np.array([-23344.02874676,-23344.02874676,-23344.02874676,-23344.02874676,-23344.02874676,-23344.02874676])
 T = np.array([5000000.,5000000.,5000000.,5000000.,5000000.,5000000.])
-Mo = np.zeros(sections)
+Mo = np.array([5000000.,5000000.,5000000.,5000000.,5000000.,5000000.])
 
 #Given data from Angela
 Iyy = 52013464.25
@@ -44,6 +44,8 @@ Sdefl = np.zeros(sections)
 qby = np.zeros(sections)
 qbz = np.zeros(sections)
 qb = np.zeros([20,sections])
+qs01 = np.zeros(sections)
+qs02 = np.zeros(sections)
 qsum1 = np.zeros(sections)
 qsum2 = np.zeros(sections)
 
@@ -53,6 +55,9 @@ for i in range(0,sections):
     sol = np.array([[T[i]],[0],[0]])
     x = np.linalg.solve(eqn,sol)*la/sections
     Tdefl[i] = x[2]+Tdefl[i-1]
+    qs01[i] = x[0]
+    qs02[i] = x[1]
+
 
 #Calculation of shear flows
 for i in range(0,sections):
@@ -81,13 +86,13 @@ for i in range(0,sections):
     x2 = np.linalg.solve(eqn,sol)*la/sections
     Sdefl[i] = x2[2]+Sdefl[i-1]
     for j in range(1,8):
-        qb[j][i] = qb[j][i]+x2[0]
+        qb[j][i] = qb[j][i]+x2[0]+qs01[i]
     for j in range(8,12):
-        qb[j][i] = qb[j][i]+x2[1]
+        qb[j][i] = qb[j][i]+x2[1]+qs02[i]
     for j in range(12,19):
         qb[j][i] = qb[19-j][i]
-    qb[0][i] = qb[0][i]+x[0]
-    qb[19][i] = qb[0][i] + x[0]
+    qb[0][i] = qb[0][i]+x[0]+qs01[i]
+    qb[19][i] = qb[19][i]+x[0]+qs01[i]
 
 
 #Deflection due to bending (z-axis)
