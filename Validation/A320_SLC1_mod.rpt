@@ -26495,16 +26495,3 @@ Field Output reported at element nodes for region: A320-1.Region_4
             5827            5861     437.348E-06     464.318E-06
             5845            5861     437.348E-06     464.318E-06
             5828            5861     437.348E-06     464.318E-06
-
-
-  Minimum                            89.9879E-06     206.395E-06
-      At Element                             856            5811
-            Node                             308             197
-
-  Maximum                            252.102E-03     250.066E-03
-      At Element                            2421            2421
-            Node                             521             521
-
-           Total                         420.581         429.357
-
-

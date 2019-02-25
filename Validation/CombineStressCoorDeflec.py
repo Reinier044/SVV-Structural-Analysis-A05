@@ -1,6 +1,7 @@
 import pandas as pd
-filename = 'Coordinates'
-df = pd.read_csv(str(filename+".csv"))
+filename = raw_input("file code: ")
+filenameCoor = 'Coordinates.csv'
+df = pd.read_csv(str(filenameCoor))
 
 #Lengths of aileron
 Lx = 2771
@@ -32,6 +33,7 @@ NewNode = []
 NewX = []
 NewY = []
 NewZ = []
+
 
 for segment in Xcoors:       
     primer = 0          #Index number of discretization segment
@@ -90,23 +92,66 @@ for segment in Xcoors:
     NewY = NewY + Temp2Y
     NewZ = NewZ + Temp2Z
 
-#Create new dict for the new data
-newdataset = {}
+#Create new dict for the new coordinate data
+Coordataset = {}
 
-newdataset['node'] = NewNode
-newdataset['x']= NewX
-newdataset['y']= NewY
-newdataset['z']= NewZ
+Coordataset['node'] = NewNode
+Coordataset['x']= NewX
+Coordataset['y']= NewY
+Coordataset['z']= NewZ
 
 
 #Write new dataset to the csv file
-df = pd.DataFrame(newdataset)
-df.to_csv(str(filename+'.csv'))
-    
+newdf = pd.DataFrame(Coordataset)
+#newdf.to_csv(str(filenameCoor))
+
+#Import the stress data    
+df = pd.read_csv(str(filename+".csv"))
+
+headers = list(df.columns.values)   #create list of all column (header) names
+Stressdataset = {}                        #create empty dictionary for all data
+
+for header in headers:
+    dfToList = df[header].tolist()
+    dfList = list(df[header])
+    Stressdataset[header]=dfList      #Create dictionary item with header as its key and returns a list containing all datapoints
 
 
-    
+
+#Create lists that contain the new counting order
+NewNode = []
+NewX = []
+NewY = []
+NewZ = []
+NewStress = []
+
+Coorprimer = 0                      #Set primer that runs through all the Coordinate nodes list
+for node in Coordataset['node']:
+    Stressprimer = 0                #Set primer that runs through all the stress nodes list
         
+    while Stressprimer < len(Coordataset['node']):
+        if int(Stressdataset['Node'][Stressprimer]) == int(node):       #Check if node corresponds to node in the stress file
         
+            #Append all the data for the found node with the corresponding index to the new lists 
+            NewNode.append(node)
+            NewX.append(Coordataset['x'][Coorprimer])
+            NewY.append(Coordataset['y'][Coorprimer])
+            NewZ.append(Coordataset['z'][Coorprimer])
+            NewStress.append(Stressdataset['MiseStress'][Stressprimer])
+            break
+        else:
+            Stressprimer = Stressprimer + 1
+    Coorprimer = Coorprimer + 1
+
+#Put all data in a dictionary
+Finaldataset = {}
+
+Finaldataset['node'] = NewNode
+Finaldataset['x']= NewX
+Finaldataset['y']= NewY
+Finaldataset['z']= NewZ
+Finaldataset['MiseStress'] = NewStress
+
+
 
 
