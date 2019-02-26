@@ -1,6 +1,10 @@
 import pandas as pd
-filename = raw_input("file name (no need to give csv extension): ")
-df = pd.read_csv(str(filename+".csv"))
+name = raw_input("Loadcase code: ")
+filenameInput = 'A320_Comp_'+name+'.csv'
+
+df = pd.read_csv(filenameInput)
+print 
+print "//Imported data"
 
 headers = list(df.columns.values)   #create list of all column (header) names
 dataset = {}                        #create empty dictionary for all data

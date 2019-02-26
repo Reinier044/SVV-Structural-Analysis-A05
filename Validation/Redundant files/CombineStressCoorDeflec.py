@@ -11,8 +11,6 @@ print "//Started reformatting nodes of discretization"
 
 #Lengths of aileron
 Lx = 2771
-Lz = 547
-Ly = 112.5
 
 #-----------------------------------------------------------------------------------------------------
 headers = list(df.columns.values)   #create list of all column (header) names

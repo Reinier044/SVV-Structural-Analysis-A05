@@ -1,16 +1,10 @@
 import pandas as pd
 name = raw_input("Loadcase code: ")
-filenameInput = 'A320_Val_'+name+'.csv'
-filenamOutput = "A320_Comp_"+name+'.csv'
+filenameInput = 'A320_Comp_'+name+'.csv'
 
 df = pd.read_csv(filenameInput)
 print 
 print "//Imported data"
-
-#Lengths of aileron
-Lx = 2771
-Lz = 547
-Ly = 112.5
 
 #Seg is the term that comes from the validation model. Boom comes from the numerical method
 BoomA = [103.71,103.71,103.71,103.71,103.71,103.71,103.71,182.19,129.75,106.83,129.75,182.19,103.71,103.71,103.71,103.71,103.71,103.71,103.71]
