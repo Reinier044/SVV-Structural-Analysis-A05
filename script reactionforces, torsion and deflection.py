@@ -219,27 +219,27 @@ T = t11 + t22 + t33 + t44 + t55 + t66
 #plotting diagrams
 
 #moment x-y plane
-plt.subplot(3,2,1)
+plt.subplot(5,1,1)
 plt.title('my')
 plt.plot(s1,my1,s2,my2,s3,my3,s4,my4,s5,my5,s6,my6)
 
 #shear x-y plane
-plt.subplot(3,2,2)
+plt.subplot(5,1,2)
 plt.title('vy')
 plt.plot(s1,vy1,s2,vy2,s3,vy3,s4,vy4,s5,vy5,s6,vy6)
 
 #moment x-z plane
-plt.subplot(3,2,3)
+plt.subplot(5,1,3)
 plt.title('mz')
 plt.plot(s1,mz1,s2,mz2,s3,mz3,s4,mz4,s5,mz5,s6,mz6)
 
 #shear x-z plane
-plt.subplot(3,2,4)
+plt.subplot(5,1,4)
 plt.title('vz')
 plt.plot(s1,vz1,s2,vz2,s3,vz3,s4,vz4,s5,vz5,s6,vz6)
 
 #torsion diagram
-plt.subplot(3,2,4)
+plt.subplot(5,1,5)
 plt.title('torsion')
 plt.plot(s1,t1,s2,t2,s3,t3,s4,t4,s5,t5,s6,t6)
 
