@@ -73,22 +73,8 @@ for i in range(0,sections):
     qs01[i] = x[0]
     qs02[i] = x[1]
 
-#
+
 #Calculation of 'open section' shear flows
-#for i in range(0,sections):
-#    qby[i] = -Vz[i]/Iyy
-#    qbz[i] = -Vy[i]/Izz
-#    qb[0][i] = qby[i]*Area[8]*zloc[8]+qbz[i]*Area[8]*yloc[8]
-#    qb[7][i] = 0.
-#    qb[8][i] = 0.
-#    qb[9][i] = qby[i]*Area[9]*zloc[9]+qbz[i]*Area[9]*yloc[9]
-#    qb[19][i] = qby[i]*Area[1]*zloc[1]+qbz[i]*Area[1]*yloc[1] #Why is this the case?
-#    for j in range(1,7):
-#        qb[j][i] = qby[i]*Area[j]*zloc[j]+qbz[i]*Area[j]*yloc[j] #Taking the trailing edge as a starting point and going along the bottom side of the triangle
-#    for j in range(10,19):
-#        qb[j][i] = qb[19-j][i] #This does not work> Go through each cell separately
-#   
-    
 for i in range(0,sections):
     qby[i] = -Vz[i]/Iyy
     qbz[i] = -Vy[i]/Izz
