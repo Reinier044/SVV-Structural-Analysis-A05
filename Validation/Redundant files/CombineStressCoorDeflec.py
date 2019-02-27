@@ -148,13 +148,13 @@ for node in Coordataset['node']:
     #Look for the Von Mises stress of the current node
     while Stressprimer < len(Coordataset['node']):
         if int(Stressdataset['Node'][Stressprimer]) == int(node):       #Check if node corresponds to node in the stress file
-        
             #If node corresponds, change Stress value accordingly
             Stress = Stressdataset['MiseStress'][Stressprimer]
             break
         else:
             Stressprimer = Stressprimer + 1
     #Append stress value to the list
+
     NewStress.append(Stress)
     Coorprimer = Coorprimer + 1
 
