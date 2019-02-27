@@ -1,6 +1,7 @@
 import pandas as pd
 name = raw_input("Loadcase code: ")
-filenameInput = 'A320_Comp_'+name+'.csv'
+filenameInput = 'A320_Val_'+name+'.csv'
+filenamOutput = 'A320_Comp_'+name+'.csv'
 
 df = pd.read_csv(filenameInput)
 print 
@@ -74,10 +75,13 @@ while primerxlong < len(dataset['Index'])-1:
         U1 = RemainU1
         U2 = RemainU2
         U3 = RemainU3
-
+        
+        factorsum = 0
         for segment in segments[:-1]:
+            
             if primerz<18:            
-                factor = float((dSegZ[segment])/float(dBoomZ[primerz])) #Percentage of the stress in thesegment with respect to the lenght of the boom discretization length
+                factor = float((dSegZ[segment])/float(dBoomZ[primerz])) #Percentage of the stress in the segment with respect to the lenght of the boom discretization length
+                
             else:
                 factor = float(24.138886/54.31)     #Manual override for program disability at last node ;)
             Stress = Stress + (dataset['MiseStress'][segment+primerxlong]*factor)
@@ -85,22 +89,26 @@ while primerxlong < len(dataset['Index'])-1:
             U1 = U1 + (dataset['U.U1'][segment+primerxlong]*factor)
             U2 = U2 + (dataset['U.U2'][segment+primerxlong]*factor)
             U3 = U3 + (dataset['U.U3'][segment+primerxlong]*factor)
-        
-        if primerz < 18:
-            factor = ((dsteps[primerz])/dBoomZ[primerz]) #Percentage of the stress in the overlapping segment with respect to the lenght of the boom discretization length
-                    
-            Stress = Stress + (dataset['MiseStress'][segments[-1]+primerxlong])*factor
-            RemainStress = (dataset['MiseStress'][segments[-1]+primerxlong])*(1-factor)
-            Mag = Mag + (dataset['U.Mag'][segments[-1]+primerxlong])*factor
-            RemainMag = (dataset['U.Mag'][segments[-1]+primerxlong])*(1-factor)
-            U1 = U1 + (dataset['U.U1'][segments[-1]+primerxlong])*factor
-            RemainU1 = (dataset['U.U1'][segments[-1]+primerxlong])*(1-factor)
-            U2 = U2 + (dataset['U.U2'][segments[-1]+primerxlong])*factor
-            RemainU2 = (dataset['U.U2'][segments[-1]+primerxlong])*(1-factor)
-            U3 = U3 + (dataset['U.U3'][segments[-1]+primerxlong])*factor
-            RemainU3 = (dataset['U.U3'][segments[-1]+primerxlong])*(1-factor)
-        
+            factorsum = factorsum + factor
 
+        if primerz < 18:
+            factor = 1-factorsum
+            factor2 = ((dsteps[primerz])/dBoomZ[primerz])-factor #Percentage of the stress in the overlapping segment with respect to the lenght of the boom discretization length
+            
+            print factor
+            print factor2
+            
+            Stress = Stress + (dataset['MiseStress'][segments[-1]+primerxlong])*factor
+            RemainStress = (dataset['MiseStress'][segments[-1]+primerxlong])*(1-factor2)
+            Mag = Mag + (dataset['U.Mag'][segments[-1]+primerxlong])*factor2
+            RemainMag = (dataset['U.Mag'][segments[-1]+primerxlong])*(1-factor2)
+            U1 = U1 + (dataset['U.U1'][segments[-1]+primerxlong])*factor2
+            RemainU1 = (dataset['U.U1'][segments[-1]+primerxlong])*(1-factor2)
+            U2 = U2 + (dataset['U.U2'][segments[-1]+primerxlong])*factor2
+            RemainU2 = (dataset['U.U2'][segments[-1]+primerxlong])*(1-factor2)
+            U3 = U3 + (dataset['U.U3'][segments[-1]+primerxlong])*factor2
+            RemainU3 = (dataset['U.U3'][segments[-1]+primerxlong])*(1-factor2)
+        
         NewX.append(dataset['x'][primerxlong])
         NewZ.append(BoomZ[primerz])
         NewY.append(BoomY[primerz])
@@ -113,7 +121,7 @@ while primerxlong < len(dataset['Index'])-1:
         PrevSeg = steps[primerz]+1
         primerz = primerz + 1
         
-        
+        break 
 
     primerxlong = primerxlong + 57
 
@@ -129,15 +137,16 @@ dataset['x']= NewX
 dataset['y']= NewY
 dataset['z']= NewZ
 dataset['MiseStress'] = NewStress
-dataset['U.Mag'] = Mag
-dataset['U.U1'] = U1
-dataset['U.U2'] = U2
-dataset['U.U3'] = U3
+dataset['U.Mag'] = NewUMag
+dataset['U.U1'] = NewU1
+dataset['U.U2'] = NewU2
+dataset['U.U3'] = NewU3
+
 
 
 #Write new dataset to the csv file
 newdf = pd.DataFrame(dataset)
-newdf.to_csv(filenamOutput)
+#newdf.to_csv(filenamOutput)
 
 print
 print '//Finished. Written data into:'
