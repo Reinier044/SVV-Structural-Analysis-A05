@@ -13,8 +13,6 @@ d3y = D3*cos(radians(26))
 d3z = D3*sin(radians(26))
 
 E = 73.1*(10**9) #Pa
-#Izz = 11996389.06*(10**(-12)) 
-#Iyy = 52013464.25*(10**(-12))
 Izz = 1.252*(10**(-5))
 Iyy = 6.203*(10**(-5))
 x1 = 0.153 #m 
@@ -30,44 +28,23 @@ q = 4.53*1000 #N/m
 qy = q*cos(radians(26)) #N
 qz = q*sin(radians(26)) #N
 
-
-#Moment around x-axis find reaction force actuator
-
-#0 = -qy*(0.25*ca-Ha/2)-pz*Ha/2+py*Ha/2+Pr*(cos(radians(26))*Ha/2-sin(radians(26))*Ha/2)
-
 Pr = (qy*(0.25*ca-Ha/2)+pz*Ha/2-py*Ha/2)/(cos(radians(26))*Ha/2-sin(radians(26))*Ha/2)
 pry = Pr*sin(radians(26))
 prz = Pr*cos(radians(26))
-print(Pr)
 
-
-
-#Reaction forces in y-direction and integration constants
-#5 functions 5 unknows -> Moments around z-direction, sum of forces in y-direction
 # and deflection function
-
-
-
-
 a = np.array([[0,0,0,x1,1], [-(x2-x1)**3/6,0,0,x2,1], [-(x3-x1)**3/6,-(x3-x2)**3/6,0,x3,1], [1,1,1,0,0], [x1,x2,x3,0,0]])
 b = np.array([-E*Izz*d1y-qy*x1**4/24,
               pry*(xa/2)**3/6-qy*x2**4/24,
               -E*Izz*d3y-py*(x3-x2-xa/2)**3/6-qy*x3**4/24+pry*(x3-x2+xa/2)**3/6,
               qy*La+py-pry,
               qy*La**2/2+py*(x2+xa/2)-pry*(x2-xa/2)])
-
 y = np.linalg.solve(a,b)
 R1y = y[0]
 R2y = y[1]
 R3y = y[2]
 c1 = y[3]
 c2 = y[4]
-
-print(y)
-
-
-
-
 
 #Reaction forces in z-direction and integration constants
 
@@ -77,7 +54,6 @@ d = np.array([-E*Iyy*d1z-qz*x1**4/24,
               -qz*x3**4/24+pz*(x3-x2-xa/2)**3/6-prz*(x3-x2+xa/2)**3/6 - E*Iyy*d3z ,
               -prz+pz-qz*La ,
               -qz*La**2/2+pz*(x2+xa/2)-prz*(x2-xa/2)])
-
 z = np.linalg.solve(c,d)
 
 R1z = z[0]
@@ -85,16 +61,10 @@ R2z = z[1]
 R3z = z[2]
 e1 = z[3]
 e2 = z[4]
-
-print(z)
-
-
 #check
 
 t1 = R1y + R2y + R3y + pry - py - qy*La
 t2 = R1z + R2z + R3z + prz - pz + qz*La
-
-print(t1,t2)
 
 #Ranges
 
@@ -110,9 +80,7 @@ def lijst(x):
     m = []
     for i in x:
         m.append(i)
-
     return m
-        
 
 #Moment diagram x-y plane
 
@@ -130,12 +98,9 @@ m4 = lijst(my4)
 m5 = lijst(my5)
 m6 = lijst(my6)
 
-#missing 0.00134m in span parts 
-
 MZ = m1+m2+m3+m4+m5+m6
 
 #Shear diagram x-y plane
-
 vy1 = -qy*s1
 vy2 = -qy*s2 + R1y
 vy3 = -qy*s3 + R1y + pry
@@ -150,12 +115,7 @@ v44 = lijst(vy4)
 v55 = lijst(vy5)
 v66 = lijst(vy6)
 
-
 VY = v11+v22+v33+v44+v55+v66
-
-
-
-
 
 #Moment diagram x-z plane
 
@@ -172,7 +132,6 @@ m33 = lijst(mz3)
 m44 = lijst(mz4)
 m55 = lijst(mz5)
 m66 = lijst(mz6)
-
 
 MY = m11+m22+m33+m44+m55+m66
 
@@ -192,12 +151,9 @@ v4 = lijst(vz4)
 v5 = lijst(vz5)
 v6 = lijst(vz6)
 
-
 VZ = v1+v2+v3+v4+v5+v6
 
 #torsion diagram (moment around shear center with x_(shear center) = ca - 0.4324 m as seen from the leading edge)
-
-
 
 t1 = -qy*s1*(0.25*ca-(ca -0.4324))
 t2 = -qy*s2*(0.25*ca-(ca -0.4324))
@@ -242,14 +198,9 @@ plt.plot(s1,vz1,s2,vz2,s3,vz3,s4,vz4,s5,vz5,s6,vz6)
 plt.subplot(5,1,5)
 plt.title('torsion')
 plt.plot(s1,t1,s2,t2,s3,t3,s4,t4,s5,t5,s6,t6)
-
 plt.show()
 
-
-
-# easy functions for Moment, deflection and torsion (by Luc)
 #Moment around z calculator in function of x
-
 def Momenty(x):
     Moment = 0
     if x > 0 and x<=x1 :
@@ -267,25 +218,23 @@ def Momenty(x):
     return Moment
 
 #deflection in local y in function of x
-
 def deflection(x):
     deflection = 0
     if x > 0 and x<=x1:
         deflection = -(qy/24.*x**4 + c1*x + c2)/(E*I)
     if x > x1 and x<=(x2-xa/2):
-        deflection = -(qy/24.*x**4 + c1*x + c2 - R1y*(x-x1)**3/6)/(E*I)
+        deflection = -(qy/24.*x**4 + c1*x + c2 - R1y*(x-x1)**3/6)/(E*Izz)
     if x > (x2-xa/2) and x <= x2:
-        deflection = -(qy/24.*x**4 + c1*x + c2 - R1y*(x-x1)**3/6 - pry*(x-(x2-xa/2))**3/6)/(E*I)
+        deflection = -(qy/24.*x**4 + c1*x + c2 - R1y*(x-x1)**3/6 - pry*(x-(x2-xa/2))**3/6)/(E*Izz)
     if x > x2 and x <= x2+xa/2:
-        deflection = -(qy/24.*x**4 + c1*x + c2 - R1y*(x-x1)**3/6 - pry*(x-(x2-xa/2))**3/6 - R2y*(x-x2)**3/6)/(E*I)
+        deflection = -(qy/24.*x**4 + c1*x + c2 - R1y*(x-x1)**3/6 - pry*(x-(x2-xa/2))**3/6 - R2y*(x-x2)**3/6)/(E*Izz)
     if x > x2+xa/2 and x <= x3:
-        deflection = -(qy/24.*x**4 + c1*x + c2 - R1y*(x-x1)**3/6 - pry*(x-(x2-xa/2))**3/6 - R2y*(x-x2)**3/6 + py*(x-(x2+xa/2))**3/6)/(E*I)
+        deflection = -(qy/24.*x**4 + c1*x + c2 - R1y*(x-x1)**3/6 - pry*(x-(x2-xa/2))**3/6 - R2y*(x-x2)**3/6 + py*(x-(x2+xa/2))**3/6)/(E*Izz)
     if x > x3 and x <= La:
-        deflection = -(qy/24.*x**4 + c1*x + c2 - R1y*(x-x1)**3/6 - pry*(x-(x2-xa/2))**3/6 - R2y*(x-x2)**3/6 + py*(x-(x2+xa/2))**3/6 - R3y*(x-x3)**3/6)/(E*I)
+        deflection = -(qy/24.*x**4 + c1*x + c2 - R1y*(x-x1)**3/6 - pry*(x-(x2-xa/2))**3/6 - R2y*(x-x2)**3/6 + py*(x-(x2+xa/2))**3/6 - R3y*(x-x3)**3/6)/(E*Izz)
     return deflection
 
 #torsion in function of x
-
 def torsion(x):
     torsion = 0
     if x > 0 and x <= (x2 - xa/2):
@@ -295,7 +244,6 @@ def torsion(x):
     if x > (x2 + xa/2) and x < La:
         torsion = -qy*x*(0.25*ca - (ca - 0.4324)) - pry*(ca - 0.4324) + prz* Ha/2 + py*(ca - 0.4324) - pz* Ha/2
     return torsion
-    
 
 #smooth lined x and y -plot for Moment diagram.
 xplot = np.arange(0,La,0.02452)
@@ -307,9 +255,5 @@ for i in lijst(xplot):
     yplot.append(Momenty(i))
     ydeflection.append(deflection(i))
     torsionalongx.append(torsion(i))    
-
-
-
-
 plt.show()
 
