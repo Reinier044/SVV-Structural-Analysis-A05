@@ -13,8 +13,8 @@ d3y = D3*cos(radians(26))
 d3z = D3*sin(radians(26))
 
 E = 73.1*(10**9) #Pa
-Izz = 1.252*(10**(-5))
-Iyy = 6.203*(10**(-5))
+Izz = 5.2*(10**(-5))
+Iyy = 1.92*(10**(-4))
 x1 = 0.153 #m 
 x2 = 1.281 #m
 x3 = 2.681 #m
@@ -221,7 +221,7 @@ def Momenty(x):
 def deflection(x):
     deflection = 0
     if x > 0 and x<=x1:
-        deflection = -(qy/24.*x**4 + c1*x + c2)/(E*I)
+        deflection = -(qy/24.*x**4 + c1*x + c2)/(E*Izz)
     if x > x1 and x<=(x2-xa/2):
         deflection = -(qy/24.*x**4 + c1*x + c2 - R1y*(x-x1)**3/6)/(E*Izz)
     if x > (x2-xa/2) and x <= x2:
@@ -250,10 +250,12 @@ xplot = np.arange(0,La,0.02452)
 yplot = []
 ydeflection = []
 torsionalongx = []
+Mz = []
 
 for i in lijst(xplot):
     yplot.append(Momenty(i))
     ydeflection.append(deflection(i))
-    torsionalongx.append(torsion(i))    
+    torsionalongx.append(torsion(i))
+    Mz.append(Momenty(i))
 plt.show()
 

@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from reactions_v_26Feb import torsion, VZ, VY
+from reactions_v_26Feb import torsion, VZ, VY, ydeflection,Mz
 import pandas as pd
 
 # Variables
@@ -15,7 +15,7 @@ h = 225.  # mm
 G = 28000.  # N/mm^2
 
 # Calculation constants
-r = h / 2
+r = h/2
 A1 = (r) ** 2 * np.pi / 2
 A2 = (Ca - r) * r
 s1 = np.pi * r  # nose part total circumference
@@ -38,7 +38,7 @@ for j in range(sections):
     var += la / sections
 Mo = np.zeros(sections)
 for j in range(sections):
-    Mo[j] = 5000000
+    Mo[j] = 0.
 
 # Given data from Angela
 Iyy = 52013464.25  # mm^4
@@ -116,7 +116,7 @@ for i in range(0, sections):
 
     dummy = 0
     for j in [6, 5, 4, 3, 2, 1, 19, 18, 17, 16, 15, 14, 13]:
-        dummy = dummy + qb[j][i] * p_tr * dstr
+        dummy = dummy + qb[j][i] *p_tr* dstr
     Mo_triangle_qb = qb[7][i] * p_tr * ((s2 - 13 * dstr) / 2) + dummy
 
     eqn = np.array([[2 * A1, 2 * A2, 0], [(s1 / t1 + h / t2) / (2 * A1), -h / (2 * A1 * t2), -1],
@@ -124,8 +124,7 @@ for i in range(0, sections):
     sol = np.array([[-Mo_nose_qb - Mo_triangle_qb + Mo[i]], [(-qsum1[i] - qb[0][i] * h / t2) / (2 * A1 * G)],
                     [(-qsum2[i] - qb[0][i] * h / t2) / (2 * A1 * G)]])
     x2 = np.linalg.solve(eqn, sol)
-
-    twist[i] += x2[2] * la / sections + twist[i - 1]
+    twist[i] += x2[2]*la/sections+twist[i - 1]
 
     for j in range(1, 8):
         q_shear_bend[j][i] = qb[j][i] + x2[1] + qs02[i]
@@ -135,20 +134,18 @@ for i in range(0, sections):
         q_shear_bend[j][i] = qb[j][i] + x2[0] + qs01[i]
     q_shear_bend[0][i] = qb[0][i] + x2[0] - x2[1] + qs01[i]  # positive upward
 
-##Deflection due to bending (z-axis)
-##Andreas
-#
+
 ##Deflection total
 Ley = np.zeros(sections)
 Tey = np.zeros(sections)
 for i in range(0,sections):
-   Ley[i] = -np.sin(twist[i])*r#+Mdefl
-   Tey[i] = np.sin(twist[i])*(Ca-r)#+Mdefl
+   Ley[i] = -np.sin(twist[i])*r-ydeflection[i]
+   Tey[i] = np.sin(twist[i])*(Ca-r)-ydeflection[i]
 
 #Von Mises stresses
 for i in range(sections):
     for j in range(20):
-        VM_stresses[j,i] = abs(q_shear_bend[j,i]/dstr)
+        VM_stresses[j,i] = abs(q_shear_bend[j,i]/dstr)+Mz[i]*yloc[j]/Izz
 
 #VM stress from Reinier
 name = "LC1"
@@ -169,7 +166,6 @@ for header in headers:
         dataset[header]=dfList      #Create dictionary item with header as its key and returns a list containing all datapoints
     flag = flag + 1                       #Used to not write the first empty column in the dataset
 
-
 for i in range(sections):
     Vali_stress[i] = dataset["MiseStress"][9+19*i]
 
@@ -179,7 +175,7 @@ implot = plt.imshow(im)
 y = [265, 340, 350, 360, 370, 380, 390, 390, 380, 310, 230, 160, 140, 140, 150, 160, 170, 180, 190, 200]
 z = [210, 570, 510, 450, 390, 330, 270, 210, 150, 100, 90, 130, 190, 250, 310, 370, 430, 490, 550, 650]
 for i in range(20):
-    plt.annotate(round(q_shear_bend[i, 50]), (z[i], y[i]))  # adjust to choose slice
+    plt.annotate(round(q_shear_bend[i, 56],2), (z[i], y[i]))  # adjust to choose slice
 plt.xlabel("z")
 plt.ylabel("y")
 plt.title("Shear flows")

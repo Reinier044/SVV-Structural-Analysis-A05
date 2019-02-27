@@ -293,10 +293,11 @@ xplot = np.arange(0, La, 0.02452)
 yplot = []
 ydeflection = []
 torsionalongx = []
+Mz = []
 
 for i in lijst(xplot):
     yplot.append(Momenty(i))
     ydeflection.append(deflection(i))
     torsionalongx.append(torsion(i))
-
+    Mz.append(Momenty(i))
 plt.show()
