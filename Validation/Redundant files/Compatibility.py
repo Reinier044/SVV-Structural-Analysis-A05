@@ -95,8 +95,7 @@ while primerxlong < len(dataset['Index'])-1:
             factor = 1-factorsum
             factor2 = ((dsteps[primerz])/dBoomZ[primerz])-factor #Percentage of the stress in the overlapping segment with respect to the lenght of the boom discretization length
             
-            print factor
-            print factor2
+
             
             Stress = Stress + (dataset['MiseStress'][segments[-1]+primerxlong])*factor
             RemainStress = (dataset['MiseStress'][segments[-1]+primerxlong])*(1-factor2)
@@ -121,7 +120,6 @@ while primerxlong < len(dataset['Index'])-1:
         PrevSeg = steps[primerz]+1
         primerz = primerz + 1
         
-        break 
 
     primerxlong = primerxlong + 57
 
