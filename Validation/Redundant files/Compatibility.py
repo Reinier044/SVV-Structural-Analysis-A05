@@ -146,7 +146,7 @@ dataset['U.U3'] = NewU3
 
 #Write new dataset to the csv file
 newdf = pd.DataFrame(dataset)
-#newdf.to_csv(filenamOutput)
+newdf.to_csv(filenamOutput)
 
 print
 print '//Finished. Written data into:'

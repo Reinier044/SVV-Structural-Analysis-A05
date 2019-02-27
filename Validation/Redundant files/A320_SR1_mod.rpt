@@ -8064,27 +8064,6 @@
             6565            6524     7.40065E-03     7.52783E-03
             6548            6524     7.40065E-03     7.52783E-03
             6566            6524     7.40065E-03     7.52783E-03
-
-
-  Minimum                            4.63266E-15     6.42441E-15
-      At Element                            5121            5129
-            Node                             789            5266
-
-  Maximum                            187.961E-03     197.365E-03
-      At Element                            3428            4066
-            Node                             182               8
-
-           Total                         372.488         382.257
-
-
-Field Output reported at element nodes for region: A320-1.Region_2
-   Computation algorithm: EXTRAPOLATE_COMPUTE_AVERAGE
-   Averaged at nodes
-   Averaging regions: ODB_REGIONS
-
-   Element Label      Node Label         S.Mises         S.Mises
-                                          @Loc 1          @Loc 2
------------------------------------------------------------------
             2235               3     10.5866E-03     10.6932E-03
             1793               3     10.5866E-03     10.6932E-03
             2262               4     2.49045E-15     4.22913E-15
@@ -12117,27 +12096,6 @@ Field Output reported at element nodes for region: A320-1.Region_2
             5729            5776     29.0132E-03     29.0214E-03
             5728            5776     29.0132E-03     29.0214E-03
             5737            5776     29.0132E-03     29.0214E-03
-
-
-  Minimum                            321.748E-18     736.782E-18
-      At Element                            2267            2257
-            Node                             492            2772
-
-  Maximum                            188.754E-03     179.548E-03
-      At Element                            3958            3868
-            Node                               8             182
-
-           Total                         232.038         229.974
-
-
-Field Output reported at element nodes for region: A320-1.Region_3
-   Computation algorithm: EXTRAPOLATE_COMPUTE_AVERAGE
-   Averaged at nodes
-   Averaging regions: ODB_REGIONS
-
-   Element Label      Node Label         S.Mises         S.Mises
-                                          @Loc 1          @Loc 2
------------------------------------------------------------------
             1760               1     11.3237E-15     11.2809E-15
                1               1     11.3237E-15     11.2809E-15
             3550               2     14.6357E-03     14.5505E-03
@@ -18410,27 +18368,6 @@ Field Output reported at element nodes for region: A320-1.Region_3
             6602            6554     6.34100E-15     6.34086E-15
             6601            6554     6.34100E-15     6.34086E-15
             6608            6554     6.34100E-15     6.34086E-15
-
-
-  Minimum                            1.48388E-15     1.36994E-15
-      At Element                             499             499
-            Node                              14              14
-
-  Maximum                            204.843E-03     220.453E-03
-      At Element                            5324            5324
-            Node                             629              22
-
-           Total                         403.447         408.937
-
-
-Field Output reported at element nodes for region: A320-1.Region_4
-   Computation algorithm: EXTRAPOLATE_COMPUTE_AVERAGE
-   Averaged at nodes
-   Averaging regions: ODB_REGIONS
-
-   Element Label      Node Label         S.Mises         S.Mises
-                                          @Loc 1          @Loc 2
------------------------------------------------------------------
             5049              13     2.65968E-03     5.02561E-03
             5739              13     2.65968E-03     5.02561E-03
             5829              14     1.11817E-15     1.11817E-15
@@ -26495,16 +26432,3 @@ Field Output reported at element nodes for region: A320-1.Region_4
             5827            5861     19.8494E-15     19.0419E-15
             5845            5861     19.8494E-15     19.0419E-15
             5828            5861     19.8494E-15     19.0419E-15
-
-
-  Minimum                            1.11817E-15     1.11817E-15
-      At Element                            5829            5829
-            Node                              14              14
-
-  Maximum                            187.961E-03     197.365E-03
-      At Element                            5193            5175
-            Node                             629              22
-
-           Total                         372.488         382.257
-
-
