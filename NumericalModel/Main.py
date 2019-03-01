@@ -7,12 +7,12 @@ import pandas as pd
 sections = 113
 
 # Geometric constants
-la = 2771.  # mm
-t1 = 1.1  # mm (skin thickness)
-t2 = 2.9  # mm (spar thickness)
-Ca = 547.  # mm
-h = 225.  # mm
-G = 28000.  # N/mm^2
+la = 2.771  # m
+t1 = 0.0011  # m (skin thickness)
+t2 = 0.0029  # m (spar thickness)
+Ca = 0.547  # m
+h = 0.225  # m
+G = 28.e9  # N/m^2
 
 # Calculation constants
 r = h/2
@@ -33,26 +33,27 @@ Vz = VZ  # import
 Vy = VY
 var = 0
 T = np.zeros(sections)
-for j in range(sections):
-    T[j] = torsion(var)
-    var += la / sections
 Mo = np.zeros(sections)
 for j in range(sections):
+    T[j] = torsion(var)
     Mo[j] = torsion(var)
+    var += la/(sections*1000.)
 
+
+print(Mo)
 #Geometrical properties
-Iyy = 52013464.25  # mm^4
-Izz = 11996389.06  # mm^4
+Iyy = 5.201346425e-5  # m^4
+Izz = 1.199638906e-5  # m^4
 Area = np.array(
     [0, 103.71, 103.71, 103.71, 103.71, 103.71, 103.71, 103.71, 182.19, 129.75, 106.83, 129.75, 182.19, 103.71, 103.71,
-     103.71, 103.71, 103.71, 103.71, 103.71])
+     103.71, 103.71, 103.71, 103.71, 103.71])/1000000.
 zloc = np.array(
     [0, 54.31, 108.62, 162.93, 217.24, 271.55, 325.86, 380.17, 434.48, 514, 547, 514, 434.48, 380.17, 325.86, 271.55,
-     217.24, 162.93, 108.62, 54.31])
-zloc = zloc - 304.93
+     217.24, 162.93, 108.62, 54.31])/1000.
+zloc = zloc - 0.30493
 yloc = np.array(
     [0., -14.0625, -28.125, -42.1875, -56.25, -70.3125, -84.375, -98.4375, -112.5, -79.55, 0., 79.55, 112.5, 98.4375,
-     84.375, 70.3125, 56.25, 42.1875, 28.125, 14.0625])
+     84.375, 70.3125, 56.25, 42.1875, 28.125, 14.0625])/1000.
 
 # Empty arrays
 twist = np.zeros(sections)
