@@ -28,7 +28,7 @@ tht4 = tht1
 phi = np.tan(r / (Ca - r))
 p_tr = np.sin(np.pi / 2 - phi) * r
 
-# Given data from Luc and Andreas
+#
 Vz = VZ  # import
 Vy = VY
 var = 0
@@ -38,9 +38,9 @@ for j in range(sections):
     var += la / sections
 Mo = np.zeros(sections)
 for j in range(sections):
-    Mo[j] = 0.
+    Mo[j] = torsion(var)
 
-# Given data from Angela
+#Geometrical properties
 Iyy = 52013464.25  # mm^4
 Izz = 11996389.06  # mm^4
 Area = np.array(
@@ -113,7 +113,6 @@ for i in range(0, sections):
 for i in range(0, sections):
     Mo_nose_qb = qb[11][i] * r ** 2 * tht1 + qb[10][i] * r ** 2 * tht2 + qb[9][i] * r ** 2 * tht3 \
                  + qb[8][i] * r ** 2 * tht4
-
     dummy = 0
     for j in [6, 5, 4, 3, 2, 1, 19, 18, 17, 16, 15, 14, 13]:
         dummy = dummy + qb[j][i] *p_tr* dstr
@@ -155,19 +154,21 @@ df = pd.read_csv(filenameInput)
 print()
 print ("//Imported data")
 
-headers = list(df.columns.values)   #create list of all column (header) names
-dataset = {}                        #create empty dictionary for all data
+headers = list(df.columns.values)
+dataset = {}
 
-flag = 0                            #Set flag to skip first empty column
+flag = 0
 for header in headers:
     dfToList = df[header].tolist()
     dfList = list(df[header])
     if flag>0:
-        dataset[header]=dfList      #Create dictionary item with header as its key and returns a list containing all datapoints
-    flag = flag + 1                       #Used to not write the first empty column in the dataset
+        dataset[header]=dfList
+    flag = flag + 1
 
 for i in range(sections):
     Vali_stress[i] = dataset["MiseStress"][9+19*i]
+    if dataset["MiseStress"][9+19*i] == 0.0 :
+        Vali_stress[i] = Vali_stress[i-1]
 
 # Plotting shear flows
 im = plt.imread("Figure2.png")
@@ -185,7 +186,14 @@ plt.show()
 plt.title("Von Mises stresses")
 plt.ylabel('$\sigma$[MPa]')
 plt.xlabel("span")
-plt.plot(VM_stresses[9], label = "Ours")
-plt.plot(Vali_stress,label = 'Validation')
+plt.plot(VM_stresses[9], label = "Numerical")
+plt.plot(Vali_stress,label = 'Finite Element')
 plt.legend()
+plt.show()
+
+#Plotting Twist
+plt.title("twist")
+plt.ylabel("angle")
+plt.xlabel("sections")
+plt.plot(twist)
 plt.show()
