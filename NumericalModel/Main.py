@@ -145,8 +145,10 @@ for i in range(0,sections):
 #Von Mises stresses
 for i in range(sections):
     for j in range(20):
-        VM_stresses[j,i] = abs(q_shear_bend[j,i]/dstr)+Mz[i]*yloc[j]/Izz
+        VM_stresses[j,i] = (abs(q_shear_bend[j,i]/dstr)+Mz[i]*yloc[j]/Izz)/1e6
 
+
+Boom = 7
 #VM stress from Reinier
 name = "LC1"
 filenameInput = 'A320_Comp_'+name+'.csv'
@@ -165,10 +167,11 @@ for header in headers:
     if flag>0:
         dataset[header]=dfList
     flag = flag + 1
-
+xcoors = []
 for i in range(sections):
-    Vali_stress[i] = dataset["MiseStress"][9+19*i]
-    if dataset["MiseStress"][9+19*i] == 0.0 :
+    Vali_stress[i] = dataset["MiseStress"][Boom+19*i]*1e3
+    xcoors.append(dataset['x'][Boom+19*i])
+    if dataset["MiseStress"][Boom+19*i] == 0.0 :
         Vali_stress[i] = Vali_stress[i-1]
 
 # Plotting shear flows
@@ -186,15 +189,34 @@ plt.show()
 #Plotting Von Mises Stresses
 plt.title("Von Mises stresses")
 plt.ylabel('$\sigma$[MPa]')
-plt.xlabel("span")
-plt.plot(VM_stresses[9], label = "Numerical")
-plt.plot(Vali_stress,label = 'Finite Element')
+plt.xlabel("Span [mm]")
+plt.plot(xcoors, VM_stresses[Boom], label = "Numerical",)
+plt.plot(xcoors, Vali_stress, label = 'Finite Element', color = 'orange')
 plt.legend()
 plt.show()
 
+#Getting difference between both models:
+diff = list(np.array(Vali_stress)-np.array(VM_stresses[Boom]))
+
+percdiff = []
+j = 0
+maxdiff = 0
+maxval = 0
+for i in diff:
+    if j>65:
+          percdiff.append((i/Vali_stress[j])*100)  
+    if i > maxdiff:
+        maxdiff = i
+        maxval = Vali_stress[j]
+    j = j +1
+    
+print(max(diff))
+print(maxdiff)
+print(maxdiff/maxval)
+print(max(percdiff))
 #Plotting Twist
-plt.title("twist")
-plt.ylabel("angle")
-plt.xlabel("sections")
-plt.plot(twist)
+plt.title("Difference between model and FEM")
+plt.ylabel("%")
+plt.xlabel("Span [mm]")
+plt.plot(xcoors[65:112],percdiff)
 plt.show()
